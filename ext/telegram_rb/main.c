@@ -54,7 +54,7 @@ int sync_from_start;
 int allow_weak_random;
 
 void set_default_username (const char *s) {
-  if (default_username) { 
+  if (default_username) {
     tfree_str (default_username);
   }
   default_username = tstrdup (s);
@@ -200,7 +200,7 @@ void running_for_first_time (void) {
     close (auth_file_fd);
 
     printf ("[%s] created\n", config_filename);*/
-  
+
     /* create downloads directory */
     /*if (mkdir (downloads_directory, 0755) !=0) {
       perror ("creating download directory");
@@ -211,7 +211,7 @@ void running_for_first_time (void) {
 
 #ifdef HAVE_LIBCONFIG
 void parse_config_val (config_t *conf, char **s, char *param_name, const char *default_name, const char *path) {
-  static char buf[1000]; 
+  static char buf[1000];
   int l = 0;
   if (prefix) {
     l = strlen (prefix);
@@ -239,7 +239,7 @@ void parse_config_val (config_t *conf, char **s, char *param_name, const char *d
 
 void parse_config (void) {
   config_filename = make_full_path (config_filename);
-  
+
   config_t conf;
   config_init (&conf);
   if (config_read_file (&conf, config_filename) != CONFIG_TRUE) {
@@ -261,12 +261,12 @@ void parse_config (void) {
   test_dc = 0;
   strcpy (buf + l, "test");
   config_lookup_bool (&conf, buf, &test_dc);
-  
+
   strcpy (buf + l, "log_level");
   long long t = log_level;
   config_lookup_int (&conf, buf, (void *)&t);
   log_level = t;
-  
+
   if (!msg_num_mode) {
     strcpy (buf + l, "msg_num");
     config_lookup_bool (&conf, buf, &msg_num_mode);
@@ -280,10 +280,10 @@ void parse_config (void) {
   parse_config_val (&conf, &secret_chat_file_name, "secret", SECRET_CHAT_FILE, config_directory);
   parse_config_val (&conf, &downloads_directory, "downloads", DOWNLOADS_DIRECTORY, config_directory);
   parse_config_val (&conf, &binlog_file_name, "binlog", BINLOG_FILE, config_directory);
-  
+
   strcpy (buf + l, "binlog_enabled");
   config_lookup_bool (&conf, buf, &binlog_enabled);
-  
+
   if (!mkdir (config_directory, CONFIG_DIRECTORY_MODE)) {
     printf ("[%s] created\n", config_directory);
   }
@@ -376,7 +376,7 @@ void args_parse (int argc, char **argv) {
       binlog_enabled = 1;
       break;
     case 'L':
-      if (log_net_file) { 
+      if (log_net_file) {
         usage ();
       }
       log_net_file = tstrdup (optarg);
@@ -416,7 +416,7 @@ void print_backtrace (void) {
 
 void sig_segv_handler (int signum __attribute__ ((unused))) {
   set_terminal_attributes ();
-  if (write (1, "SIGSEGV received\n", 18) < 0) { 
+  if (write (1, "SIGSEGV received\n", 18) < 0) {
     // Sad thing
   }
   print_backtrace ();
@@ -425,7 +425,7 @@ void sig_segv_handler (int signum __attribute__ ((unused))) {
 
 void sig_abrt_handler (int signum __attribute__ ((unused))) {
   set_terminal_attributes ();
-  if (write (1, "SIGABRT received\n", 18) < 0) { 
+  if (write (1, "SIGABRT received\n", 18) < 0) {
     // Sad thing
   }
   print_backtrace ();
@@ -437,7 +437,7 @@ int telegram_main_org(int argc, char **argv) {
   signal (SIGABRT, sig_abrt_handler);
 
   log_level = 10;
-  
+
   args_parse (argc, argv);
   printf (
     "Telegram-client version " TG_VERSION ", Copyright (C) 2013 Vitaly Valtman\n"
@@ -452,16 +452,17 @@ int telegram_main_org(int argc, char **argv) {
   get_terminal_attributes ();
 
   inner_main ();
-  
+
   return 0;
 }
 
-int telegram_main(char *pub_key){
+int telegram_main(char *pub_key, char *username){
   //signal (SIGSEGV, sig_segv_handler);
   //signal (SIGABRT, sig_abrt_handler);
   //verbosity = 2;
 
   rsa_public_key_name = pub_key;
+  set_default_username (username);
   running_for_first_time ();
   parse_config ();
 
