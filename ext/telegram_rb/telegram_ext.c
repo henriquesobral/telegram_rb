@@ -8,10 +8,10 @@ static VALUE rb_cUser;
 extern peer_t *Peers[];
 extern int peer_num;
 
-static VALUE load_config(VALUE self, VALUE pub_key){
+static VALUE load_config(VALUE self, VALUE pub_key, VALUE username){
   Check_Type(pub_key, T_STRING);
 
-  telegram_main(RSTRING_PTR(pub_key));
+  telegram_main(RSTRING_PTR(pub_key), RSTRING_PTR(username));
 
   return Qnil;
 }
